@@ -10,5 +10,6 @@ namespace RestaurantOps.Legacy.Data
         void AddLine(int orderId, int menuItemId, int qty, decimal price);
         void SubmitOrder(int orderId);
         void CloseOrder(int orderId);
+        IEnumerable<OrderLine> GetLines(int orderId);
     }
 } 
