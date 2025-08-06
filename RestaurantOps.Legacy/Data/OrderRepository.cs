@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using Microsoft.Data.SqlClient;
 using RestaurantOps.Legacy.Models;
 using Microsoft.EntityFrameworkCore;
 

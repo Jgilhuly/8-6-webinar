@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace RestaurantOps.Legacy.Models
@@ -19,6 +20,9 @@ namespace RestaurantOps.Legacy.Models
 
         [Range(0, 99999)]
         public decimal ReorderThreshold { get; set; }
+
+        // Navigation properties for EF Core
+        public List<InventoryTx> InventoryTransactions { get; set; } = new();
 
         // Convenience property
         public bool NeedsReorder => QuantityOnHand <= ReorderThreshold;
