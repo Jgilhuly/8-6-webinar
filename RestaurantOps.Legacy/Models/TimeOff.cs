@@ -17,6 +17,9 @@ namespace RestaurantOps.Legacy.Models
         [Required, StringLength(20)]
         public string Status { get; set; } = "Pending"; // Pending, Approved, Denied
 
+        // Navigation properties for EF Core
+        public Employee? Employee { get; set; }
+        
         // Convenience
         public string? EmployeeName { get; set; }
     }

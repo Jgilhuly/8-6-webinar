@@ -8,8 +8,14 @@ namespace RestaurantOps.Legacy.Controllers
 {
     public class ScheduleController : Controller
     {
-        private readonly EmployeeRepository _empRepo = new();
-        private readonly ShiftRepository _shiftRepo = new();
+        private readonly IEmployeeRepository _empRepo;
+        private readonly IShiftRepository _shiftRepo;
+
+        public ScheduleController(IEmployeeRepository empRepo, IShiftRepository shiftRepo)
+        {
+            _empRepo = empRepo;
+            _shiftRepo = shiftRepo;
+        }
 
         public IActionResult Index(string? week)
         {

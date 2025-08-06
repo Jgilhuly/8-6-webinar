@@ -20,6 +20,9 @@ namespace RestaurantOps.Legacy.Models
         [Required, StringLength(30)]
         public string Role { get; set; } = string.Empty;
 
+        // Navigation properties for EF Core
+        public Employee? Employee { get; set; }
+        
         // Convenience
         public string? EmployeeName { get; set; }
     }

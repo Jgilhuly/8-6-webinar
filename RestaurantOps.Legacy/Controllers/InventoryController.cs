@@ -6,8 +6,14 @@ namespace RestaurantOps.Legacy.Controllers
 {
     public class InventoryController : Controller
     {
-        private readonly IngredientRepository _ingRepo = new();
-        private readonly InventoryRepository _txRepo = new();
+        private readonly IIngredientRepository _ingRepo;
+        private readonly IInventoryRepository _txRepo;
+
+        public InventoryController(IIngredientRepository ingRepo, IInventoryRepository txRepo)
+        {
+            _ingRepo = ingRepo;
+            _txRepo = txRepo;
+        }
 
         public IActionResult Index()
         {

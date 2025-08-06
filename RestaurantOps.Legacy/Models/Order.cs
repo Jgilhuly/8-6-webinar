@@ -12,5 +12,8 @@ namespace RestaurantOps.Legacy.Models
         public string Status { get; set; } = "Open";
 
         public List<OrderLine> Lines { get; set; } = new();
+        
+        // Navigation properties for EF Core
+        public RestaurantTable? Table { get; set; }
     }
 } 

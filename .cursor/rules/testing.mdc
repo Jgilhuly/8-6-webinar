@@ -1,0 +1,34 @@
+---
+description: Rules for writing and running test files
+alwaysApply: false
+---
+# Testing Patterns and Conventions
+
+## Test Structure
+Located in [RestaurantOps.Tests/](mdc:RestaurantOps.Tests/) directory with standard .NET testing patterns.
+
+## Test Organization
+- [UnitTests/](mdc:RestaurantOps.Tests/UnitTests/) - Unit tests for individual components
+- [IntegrationTests/](mdc:RestaurantOps.Tests/IntegrationTests/) - Integration tests for full workflows
+- [Builders/](mdc:RestaurantOps.Tests/Builders/) - Test data builders and factories
+
+## Testing Framework
+- Uses standard .NET testing frameworks (xUnit, NUnit, or MSTest)
+- Follows AAA pattern (Arrange, Act, Assert)
+- Uses test builders for creating test data
+- Integration tests may use test databases
+# Testing Patterns and Conventions
+
+## Test Structure
+Located in [RestaurantOps.Tests/](mdc:RestaurantOps.Tests/) directory with standard .NET testing patterns.
+
+## Test Organization
+- [UnitTests/](mdc:RestaurantOps.Tests/UnitTests/) - Unit tests for individual components
+- [IntegrationTests/](mdc:RestaurantOps.Tests/IntegrationTests/) - Integration tests for full workflows
+- [Builders/](mdc:RestaurantOps.Tests/Builders/) - Test data builders and factories
+
+## Testing Framework
+- Uses standard .NET testing frameworks (xUnit, NUnit, or MSTest)
+- Follows AAA pattern (Arrange, Act, Assert)
+- Uses test builders for creating test data
+- Integration tests may use test databases

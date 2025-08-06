@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using RestaurantOps.Legacy.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,8 +6,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Legacy ADO.NET helper initialization
-SqlHelper.Initialize(builder.Configuration);
+// Add Entity Framework Core
+builder.Services.AddDbContext<RestaurantOpsContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+// Register repository services with DI container
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+builder.Services.AddScoped<ITableRepository, TableRepository>();
+builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 
 var app = builder.Build();
 

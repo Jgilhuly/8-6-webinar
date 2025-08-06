@@ -9,5 +9,9 @@ namespace RestaurantOps.Legacy.Models
         public int Quantity { get; set; }
         public decimal PriceEach { get; set; }
         public decimal LineTotal => Quantity * PriceEach;
+        
+        // Navigation properties for EF Core
+        public Order? Order { get; set; }
+        public MenuItem? MenuItem { get; set; }
     }
 } 

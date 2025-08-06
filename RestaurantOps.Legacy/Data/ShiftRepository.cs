@@ -2,111 +2,79 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using RestaurantOps.Legacy.Models;
 
 namespace RestaurantOps.Legacy.Data
 {
-    public class ShiftRepository
+    public class ShiftRepository : IShiftRepository
     {
+        private readonly RestaurantOpsContext _context;
+
+        public ShiftRepository(RestaurantOpsContext context)
+        {
+            _context = context;
+        }
+
         public IEnumerable<Shift> GetByDateRange(DateTime start, DateTime end)
         {
-            const string sql = @"SELECT s.ShiftId, s.EmployeeId, e.FirstName + ' ' + e.LastName AS EmployeeName,
-                                         s.ShiftDate, s.StartTime, s.EndTime, s.Role
-                                    FROM Shifts s JOIN Employees e ON e.EmployeeId = s.EmployeeId
-                                   WHERE s.ShiftDate BETWEEN @start AND @end
-                                   ORDER BY s.ShiftDate, s.StartTime";
-            var dt = SqlHelper.ExecuteDataTable(sql,
-                new SqlParameter("@start", start.Date),
-                new SqlParameter("@end", end.Date));
-            foreach (DataRow row in dt.Rows)
-            {
-                yield return Map(row);
-            }
+            return _context.Shifts
+                .Include(s => s.Employee)
+                .Where(s => s.ShiftDate >= start.Date && s.ShiftDate <= end.Date)
+                .OrderBy(s => s.ShiftDate)
+                .ThenBy(s => s.StartTime)
+                .ToList();
         }
 
         public void Add(Shift shift)
         {
-            const string sql = @"INSERT INTO Shifts (EmployeeId, ShiftDate, StartTime, EndTime, Role)
-                                 VALUES (@emp, @date, @start, @end, @role)";
-            SqlHelper.ExecuteNonQuery(sql,
-                new SqlParameter("@emp", shift.EmployeeId),
-                new SqlParameter("@date", shift.ShiftDate.Date),
-                new SqlParameter("@start", shift.StartTime),
-                new SqlParameter("@end", shift.EndTime),
-                new SqlParameter("@role", shift.Role));
+            _context.Shifts.Add(shift);
+            _context.SaveChanges();
         }
 
         public void Delete(int shiftId)
         {
-            const string sql = "DELETE FROM Shifts WHERE ShiftId = @id";
-            SqlHelper.ExecuteNonQuery(sql, new SqlParameter("@id", shiftId));
+            var shift = _context.Shifts.Find(shiftId);
+            if (shift != null)
+            {
+                _context.Shifts.Remove(shift);
+                _context.SaveChanges();
+            }
         }
 
         // Time-off logic
         public IEnumerable<TimeOff> GetPendingTimeOff()
         {
-            const string sql = @"SELECT t.TimeOffId, t.EmployeeId, e.FirstName + ' ' + e.LastName AS EmployeeName,
-                                         t.StartDate, t.EndDate, t.Status
-                                    FROM TimeOff t JOIN Employees e ON e.EmployeeId = t.EmployeeId
-                                   WHERE t.Status = 'Pending'";
-            var dt = SqlHelper.ExecuteDataTable(sql);
-            foreach (DataRow row in dt.Rows)
-            {
-                yield return MapTimeOff(row);
-            }
+            return _context.TimeOffs
+                .Include(t => t.Employee)
+                .Where(t => t.Status == "Pending")
+                .ToList();
         }
 
         public void SetTimeOffStatus(int timeOffId, string status)
         {
-            const string sql = "UPDATE TimeOff SET Status=@st WHERE TimeOffId=@id";
-            SqlHelper.ExecuteNonQuery(sql,
-                new SqlParameter("@st", status),
-                new SqlParameter("@id", timeOffId));
+            var timeOff = _context.TimeOffs.Find(timeOffId);
+            if (timeOff != null)
+            {
+                timeOff.Status = status;
+                _context.SaveChanges();
+            }
         }
 
         public bool HasOverlap(int employeeId, DateTime date, TimeSpan start, TimeSpan end)
         {
-            const string sql = @"SELECT COUNT(*) FROM Shifts
-                                  WHERE EmployeeId = @emp AND ShiftDate = @date
-                                    AND @start < EndTime AND @end > StartTime";
-            var count = (int)SqlHelper.ExecuteScalar(sql,
-                new SqlParameter("@emp", employeeId),
-                new SqlParameter("@date", date.Date),
-                new SqlParameter("@start", start),
-                new SqlParameter("@end", end));
-            return count > 0;
+            return _context.Shifts
+                .Any(s => s.EmployeeId == employeeId && 
+                          s.ShiftDate == date.Date &&
+                          start < s.EndTime && end > s.StartTime);
         }
 
         public bool IsDuringApprovedTimeOff(int employeeId, DateTime date)
         {
-            const string sql = @"SELECT COUNT(*) FROM TimeOff
-                                  WHERE EmployeeId=@emp AND Status='Approved'
-                                    AND @date BETWEEN StartDate AND EndDate";
-            var count = (int)SqlHelper.ExecuteScalar(sql,
-                new SqlParameter("@emp", employeeId),
-                new SqlParameter("@date", date.Date));
-            return count > 0;
+            return _context.TimeOffs
+                .Any(t => t.EmployeeId == employeeId && 
+                          t.Status == "Approved" &&
+                          date.Date >= t.StartDate && date.Date <= t.EndDate);
         }
-
-        private static Shift Map(DataRow row) => new()
-        {
-            ShiftId = (int)row["ShiftId"],
-            EmployeeId = (int)row["EmployeeId"],
-            EmployeeName = row["EmployeeName"].ToString(),
-            ShiftDate = (DateTime)row["ShiftDate"],
-            StartTime = (TimeSpan)row["StartTime"],
-            EndTime = (TimeSpan)row["EndTime"],
-            Role = row["Role"].ToString()!
-        };
-
-        private static TimeOff MapTimeOff(DataRow row) => new()
-        {
-            TimeOffId = (int)row["TimeOffId"],
-            EmployeeId = (int)row["EmployeeId"],
-            EmployeeName = row["EmployeeName"].ToString(),
-            StartDate = (DateTime)row["StartDate"],
-            EndDate = (DateTime)row["EndDate"],
-            Status = row["Status"].ToString()!
-        };
     }
 } 

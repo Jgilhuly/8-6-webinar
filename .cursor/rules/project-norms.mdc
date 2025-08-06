@@ -1,0 +1,8 @@
+---
+alwaysApply: true
+---
+This project maps to a board in linear called JG, and a project called DOTNET
+
+Whenever you make changes to the project architecture, also be sure to update ARCHITECTURE.md file.
+
+Also be sure to update ONBOARDING.md as needed.

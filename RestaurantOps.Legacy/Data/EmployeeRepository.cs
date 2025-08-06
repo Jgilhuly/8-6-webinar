@@ -1,61 +1,46 @@
-using System.Collections.Generic;
-using System.Data;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using RestaurantOps.Legacy.Models;
 
 namespace RestaurantOps.Legacy.Data
 {
-    public class EmployeeRepository
+    public class EmployeeRepository : IEmployeeRepository
     {
+        private readonly RestaurantOpsContext _context;
+
+        public EmployeeRepository(RestaurantOpsContext context)
+        {
+            _context = context;
+        }
+
         public IEnumerable<Employee> GetAll(bool includeInactive = false)
         {
-            var sql = "SELECT EmployeeId, FirstName, LastName, Role, HireDate, IsActive FROM Employees" +
-                      (includeInactive ? string.Empty : " WHERE IsActive = 1") + " ORDER BY LastName, FirstName";
-            var dt = SqlHelper.ExecuteDataTable(sql);
-            foreach (DataRow row in dt.Rows)
+            var query = _context.Employees.AsQueryable();
+            if (!includeInactive)
             {
-                yield return Map(row);
+                query = query.Where(e => e.IsActive);
             }
+            return query.OrderBy(e => e.LastName).ThenBy(e => e.FirstName).ToList();
         }
 
         public Employee? GetById(int id)
         {
-            const string sql = "SELECT EmployeeId, FirstName, LastName, Role, HireDate, IsActive FROM Employees WHERE EmployeeId = @id";
-            var dt = SqlHelper.ExecuteDataTable(sql, new SqlParameter("@id", id));
-            return dt.Rows.Count == 0 ? null : Map(dt.Rows[0]);
+            return _context.Employees.Find(id);
         }
 
         public void Add(Employee emp)
         {
-            const string sql = @"INSERT INTO Employees (FirstName, LastName, Role, HireDate, IsActive)
-                                 VALUES (@fn, @ln, @role, @hd, @act)";
-            SqlHelper.ExecuteNonQuery(sql,
-                new SqlParameter("@fn", emp.FirstName),
-                new SqlParameter("@ln", emp.LastName),
-                new SqlParameter("@role", emp.Role),
-                new SqlParameter("@hd", emp.HireDate.Date),
-                new SqlParameter("@act", emp.IsActive));
+            _context.Employees.Add(emp);
+            _context.SaveChanges();
         }
 
         public void Update(Employee emp)
         {
-            const string sql = @"UPDATE Employees SET FirstName=@fn, LastName=@ln, Role=@role, IsActive=@act WHERE EmployeeId=@id";
-            SqlHelper.ExecuteNonQuery(sql,
-                new SqlParameter("@fn", emp.FirstName),
-                new SqlParameter("@ln", emp.LastName),
-                new SqlParameter("@role", emp.Role),
-                new SqlParameter("@act", emp.IsActive),
-                new SqlParameter("@id", emp.EmployeeId));
+            var existing = _context.Employees.Find(emp.EmployeeId);
+            if (existing != null)
+            {
+                _context.Entry(existing).CurrentValues.SetValues(emp);
+                _context.SaveChanges();
+            }
         }
-
-        private static Employee Map(DataRow row) => new()
-        {
-            EmployeeId = (int)row["EmployeeId"],
-            FirstName = row["FirstName"].ToString()!,
-            LastName = row["LastName"].ToString()!,
-            Role = row["Role"].ToString()!,
-            HireDate = (DateTime)row["HireDate"],
-            IsActive = (bool)row["IsActive"]
-        };
     }
 } 

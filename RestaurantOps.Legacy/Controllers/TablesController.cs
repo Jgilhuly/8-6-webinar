@@ -6,8 +6,14 @@ namespace RestaurantOps.Legacy.Controllers
 {
     public class TablesController : Controller
     {
-        private readonly TableRepository _tableRepo = new();
-        private readonly OrderRepository _orderRepo = new();
+        private readonly ITableRepository _tableRepo;
+        private readonly IOrderRepository _orderRepo;
+
+        public TablesController(ITableRepository tableRepo, IOrderRepository orderRepo)
+        {
+            _tableRepo = tableRepo;
+            _orderRepo = orderRepo;
+        }
 
         public IActionResult Index()
         {

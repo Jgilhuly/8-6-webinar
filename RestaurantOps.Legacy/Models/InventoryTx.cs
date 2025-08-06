@@ -16,6 +16,9 @@ namespace RestaurantOps.Legacy.Models
         [StringLength(255)]
         public string? Notes { get; set; }
 
+        // Navigation properties for EF Core
+        public Ingredient? Ingredient { get; set; }
+        
         // Convenience display property
         public string? IngredientName { get; set; }
     }

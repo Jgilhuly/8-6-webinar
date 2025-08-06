@@ -1,0 +1,53 @@
+# Legacy System Patterns and Modernization Notes
+
+## Legacy Characteristics
+
+### Data Access
+- Uses ADO.NET instead of Entity Framework
+- Synchronous operations throughout (no async/await)
+- Direct SQL queries in repository classes
+- Manual connection management via [SqlHelper.cs](mdc:RestaurantOps.Legacy/Data/SqlHelper.cs)
+- No dependency injection for repositories
+
+### Architecture
+- Traditional MVC without modern patterns
+- Controllers directly instantiate repositories
+- No service layer abstraction
+- Simple POCO models without validation
+- No modern features like async/await, dependency injection for data access
+
+### Database
+- SQL Server with direct ADO.NET access
+- Schema defined in [Database/init.sql](mdc:Database/init.sql)
+- Parameterized queries for security
+- No ORM mapping or migrations
+
+## Modernization Opportunities
+
+### Immediate Improvements
+- Add async/await patterns to data access
+- Implement dependency injection for repositories
+- Add validation attributes to models
+- Create service layer for business logic
+- Add proper error handling and logging
+
+### Architecture Improvements
+- Migrate to Entity Framework Core
+- Implement repository interfaces and DI
+- Add unit tests with mocking
+- Implement proper exception handling
+- Add API controllers for modern frontend
+
+### Security Enhancements
+- Add input validation
+- Implement proper authentication/authorization
+- Add CSRF protection
+- Use HTTPS throughout
+- Implement proper session management
+
+## Current State
+This is a functional legacy system that demonstrates traditional ASP.NET Core MVC patterns. While functional, it lacks modern development practices and would benefit from gradual modernization.
+description:
+globs:
+alwaysApply: false
+---

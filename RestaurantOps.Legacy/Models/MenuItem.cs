@@ -17,6 +17,9 @@ namespace RestaurantOps.Legacy.Models
 
         public bool IsAvailable { get; set; } = true;
 
+        // Navigation properties for EF Core
+        public Category? Category { get; set; }
+        
         // Navigation (for view convenience only, not EF)
         public string? CategoryName { get; set; }
     }
