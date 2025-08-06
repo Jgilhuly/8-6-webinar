@@ -1,0 +1,5 @@
+---
+description: Rules for git commits
+alwaysApply: false
+---
+Follow conventional commit standards (using feat:, docs:, etc.)
