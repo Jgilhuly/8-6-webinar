@@ -101,7 +101,7 @@ RestaurantOps.Legacy/
 │   ├── PaymentGatewayController.cs
 │   └── KitchenDisplayController.cs
 ├── Data/                # Data Access Layer
-│   ├── SqlHelper.cs     # Database connection utility
+│   ├── RestaurantOpsContext.cs  # EF Core DbContext
 │   ├── IOrderRepository.cs
 │   ├── OrderRepository.cs
 │   ├── IMenuRepository.cs

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace RestaurantOps.Legacy.Models
@@ -19,6 +20,10 @@ namespace RestaurantOps.Legacy.Models
         public DateTime HireDate { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        // Navigation properties for EF Core
+        public List<Shift> Shifts { get; set; } = new();
+        public List<TimeOff> TimeOffs { get; set; } = new();
 
         // Convenience
         public string FullName => $"{FirstName} {LastName}";
