@@ -1,10 +1,10 @@
 # Restaurant Operations System
 
-A legacy-style .NET Core web application for restaurant back-office operations, designed to demonstrate modernization techniques. The app handles menu management, inventory, scheduling, and reporting while intentionally using outdated patterns that can be incrementally modernized.
+A comprehensive .NET Core web application for restaurant back-office operations. The system handles menu management, inventory tracking, employee scheduling, and reporting to streamline restaurant operations.
 
 ## Overview
 
-This project showcases a complete restaurant management system built with deliberate "legacy" patterns using modern .NET Core runtime. It serves as a baseline for demonstrating various modernization techniques, from infrastructure upgrades to microservices architecture.
+This project provides a complete restaurant management system built with ASP.NET Core MVC. It serves as a robust solution for restaurant owners and managers to handle daily operations efficiently.
 
 ## Features
 
@@ -19,10 +19,10 @@ This project showcases a complete restaurant management system built with delibe
 
 Built as a monolithic ASP.NET Core MVC application with:
 - **Frontend**: Server-rendered Razor views with Bootstrap 4 and jQuery
-- **Data Layer**: ADO.NET with `SqlConnection`, `DataTable`, and stored procedures
-- **Services**: Fat service classes with no dependency injection
-- **Authentication**: Cookie-based auth with hard-coded roles
-- **Logging**: Basic `System.Diagnostics.Trace`
+- **Data Layer**: Entity Framework Core with SQL Server
+- **Services**: Repository pattern with dependency injection
+- **Authentication**: Cookie-based auth with role-based access control
+- **Logging**: Structured logging with Serilog
 
 ## Setup
 
@@ -54,16 +54,13 @@ For development with auto-reload:
 dotnet watch run --project RestaurantOps.Legacy
 ```
 
-## Modernization Roadmap
+## Technology Stack
 
-This codebase is intentionally designed with legacy patterns to demonstrate modernization paths:
-
-1. **Infrastructure** - Add DI container, structured logging (Serilog)
-2. **Data Layer** - Migrate to Entity Framework Core with async patterns
-3. **Application** - Introduce MediatR, CQRS, FluentValidation
-4. **Frontend** - Replace Razor views with React/Blazor SPA
-5. **Architecture** - Extract microservices, add message queuing
-6. **Cloud** - Deploy to Azure with App Service and managed databases
+- **Backend**: ASP.NET Core 6, Entity Framework Core
+- **Frontend**: Razor Views, Bootstrap 4, jQuery
+- **Database**: SQL Server with EF Core migrations
+- **Testing**: xUnit with integration and unit tests
+- **Logging**: Serilog with structured logging
 
 ## Database Schema
 
